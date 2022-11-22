@@ -4,25 +4,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Realtime location tracker</title>
+    <title>Realtime location Display</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
 
-    <!-- Leaflet CSS  -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
-    integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
-    crossorigin=""/>
+ <!-- <link rel="stylesheet" type="text/css" href= "styles.css"> -->
+ <!--style>
 
-     <!--Leaflet's JS  -->
- <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
- integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
- crossorigin=""></script>
+body {
+    margin: 0;
+    padding: 0;
+}
 
- <link rel=¨stylesheet¨ type=¨text/css¨ href=¨styles.css¨>
+#map {
+position: absolute;
+width: 0
+height: 0;
+}
+
+
+
+.leaflet-container {
+    height: 4000px;
+    width: 6000px;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+#startInfo {
+    position: absolute;
+    left: 50%;
+    top: 95%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    z-index: 400;
+    /* width: 60%; */
+    width: 100%;
+    /* height: 75%; */
+    display: block;
+    overflow: auto;
+    background-color: black;
+    color: white;
+    text-align: center;
+    font-size: 15px;
+    /* border-style: solid; */
+    /* border-color: red; */
+    /* border-width: 10px; */
+    /* border-radius: 12px; */
+    /* padding: 10px; */
+}
+
+#startInfoInner {
+    position: relative;
+    bottom: 100;
+    padding: 20px;
+}
+
+ </style-->
 
 </head>
 
 <body>
+
     <div id="map"></div>
-    <script type = "module" src="script.js"></script>
+
+    <div id="startInfo" data-nosnippet>
+        <div id="startInfoInner">
+            This map will show your location to all other visitors currently on this website.
+            <br><br>Your data will be deleted from the database when you leave this website.
+        </div>
+    <link rel="stylesheet" href="styles.css">
+   <script type="module" src="map.js"></script>
+ <!--script>
+//closing tags
+
+
+ // Map initialization 
+ var map = L.map('map').setView([14.0860746, 100.608406], 6);
+
+ //osm layer
+
+/* var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+ });
+ osm.addTo(map); */
+
+ var osm = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
+ maxZoom: 20,
+ attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+}).addTo(map); 
+
+ if(!navigator.geolocation) {
+     console.log("Your browser doesn't support geolocation feature!")
+ } else {
+     setInterval(() => {
+         navigator.geolocation.getCurrentPosition(getPosition)
+     }, 5000);
+ }
+
+ var marker, circle;
+
+ function getPosition(position){
+     // console.log(position)
+     var lat = position.coords.latitude
+     var long = position.coords.longitude
+     var accuracy = position.coords.accuracy
+
+     if(marker) {
+         map.removeLayer(marker)
+     }
+
+     if(circle) {
+         map.removeLayer(circle)
+     }
+
+     marker = L.marker([lat, long])
+     circle = L.circle([lat, long], {radius: accuracy})
+
+     var featureGroup = L.featureGroup([marker, circle]).addTo(map)
+
+     map.fitBounds(featureGroup.getBounds())
+
+     var userOutputDisplay = "Your coordinate is: Lat: "+ lat +"; Long: "+ long+ "; Accuracy: "+ accuracy
+     document.getElementById('startInfoInner').innerHTML = userOutputDisplay;
+     }
+</!--script>-->
 
 </body>
 </html>
